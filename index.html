@@ -1,15 +1,335 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>yingmiaohuangg</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 动态背景 */
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: radial-gradient(ellipse at 20% 50%, #1a0533 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 20%, #001a33 0%, transparent 60%),
+                  radial-gradient(ellipse at 60% 80%, #0a1a00 0%, transparent 60%),
+                  #0a0a0f;
+    }
+
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: float linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes float {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* 主内容 */
+    .container {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    /* 头像区域 */
+    .avatar-wrap {
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    .avatar-ring {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #7c3aed, #2563eb, #06b6d4);
+      padding: 3px;
+      animation: spin 8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .avatar-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #0a0a0f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+
+    /* 名字 */
+    .name {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(90deg, #a78bfa, #60a5fa, #34d399, #60a5fa, #a78bfa);
+      background-size: 300%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    @keyframes shimmer {
+      to { background-position: 300% center; }
+    }
+
+    /* 职位 */
+    .title {
+      font-size: 1.1rem;
+      color: #94a3b8;
+      margin-bottom: 40px;
+      text-align: center;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .title span {
+      color: #7c3aed;
+    }
+
+    /* 技能卡片 */
+    .skills {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 48px;
+    }
+
+    .skill-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 20px 28px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      cursor: default;
+      min-width: 140px;
+    }
+
+    .skill-card:hover {
+      background: rgba(124,58,237,0.15);
+      border-color: rgba(124,58,237,0.5);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(124,58,237,0.2);
+    }
+
+    .skill-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .skill-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #e0e0e0;
+    }
+
+    .skill-sub {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    /* 状态条 */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 100px;
+      padding: 8px 20px;
+      margin-bottom: 40px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #34d399;
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.4); }
+      50%       { box-shadow: 0 0 0 6px rgba(52,211,153,0); }
+    }
+
+    /* 社交链接 */
+    .links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .link-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      border: 1px solid transparent;
+    }
+
+    .link-btn.github {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(255,255,255,0.12);
+      color: #e0e0e0;
+    }
+
+    .link-btn.github:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateY(-2px);
+    }
+
+    /* 底部 */
+    .footer {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem;
+      color: #334155;
+      z-index: 1;
+      white-space: nowrap;
+    }
+
+    /* 光晕 */
+    .glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.12;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-1 { background: #7c3aed; top: -200px; left: -200px; }
+    .glow-2 { background: #2563eb; bottom: -200px; right: -200px; }
+  </style>
 </head>
-
 <body>
-  <h1>hello github</h1>
-</body>
 
+<div class="bg"></div>
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+
+<div class="particles" id="particles"></div>
+
+<div class="container">
+
+  <div class="avatar-wrap">
+    <div class="avatar-ring">
+      <div class="avatar-inner">👨‍💻</div>
+    </div>
+  </div>
+
+  <h1 class="name">yingmiaohuangg</h1>
+  <p class="title">App <span>&</span> Web Developer</p>
+
+  <div class="status-bar">
+    <span class="status-dot"></span>
+    <span>开放合作 · Open to collaborate</span>
+  </div>
+
+  <div class="skills">
+    <div class="skill-card">
+      <span class="skill-icon">🤖</span>
+      <div class="skill-name">Android</div>
+      <div class="skill-sub">Native App 开发</div>
+    </div>
+    <div class="skill-card">
+      <span class="skill-icon">🌐</span>
+      <div class="skill-name">Web 开发</div>
+      <div class="skill-sub">前端 / 全栈</div>
+    </div>
+    <div class="skill-card">
+      <span class="skill-icon">📱</span>
+      <div class="skill-name">移动端</div>
+      <div class="skill-sub">UI/UX 体验</div>
+    </div>
+  </div>
+
+  <div class="links">
+    <a class="link-btn github" href="https://github.com/yingmiaohuangg" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+      </svg>
+      GitHub
+    </a>
+  </div>
+
+</div>
+
+<div class="footer">Built with 🦞 by yingmiaohuangg</div>
+
+<script>
+  // 生成粒子
+  const container = document.getElementById('particles');
+  const colors = ['#7c3aed', '#2563eb', '#06b6d4', '#34d399', '#a78bfa'];
+
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 4 + 1;
+    p.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${Math.random() * 100}%;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration: ${Math.random() * 15 + 10}s;
+      animation-delay: ${Math.random() * 10}s;
+    `;
+    container.appendChild(p);
+  }
+</script>
+
+</body>
 </html>
